@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="WebServers">
+    <option name="servers">
+      <webServer id="f29cc260-8ea8-492b-95d8-404512aa95d9" name="macOS">
+        <fileTransfer rootFolder="/Users/Anastasiia.Posulikhina/testfolder" accessType="SFTP" host="172.20.10.2" port="22" sshConfigId="9b8fa40c-7f19-4d73-abee-879c99da3387" sshConfig="Anastasiia.Posulikhina@172.20.10.2:22 password">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" keepAliveTimeout="0" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+    </option>
+  </component>
+</project>

@@ -1,0 +1,36 @@
+﻿@page "/counter"
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+    // SCENARIO "wasm-basics" (Blazor WebAssembly - "basics only" technology)
+    //   README -> Basics -> Core actions, Breakpoints 1.1, Stepping 1 and 3,
+    //   Threads & Variables 3-4, Evaluation.
+    // SETUP: start BlazorAppWASM under the debugger, open /counter in the launched browser.
+    // BREAKPOINT: on 'Console.WriteLine("Hello 1");' below.
+    // ACTION: click "Click me".
+    // EXPECTED: the debugger suspends here, 'currentCount' is visible in Variables and in
+    //   the editor tooltip, Step Over advances line by line, and Resume lets the page
+    //   update. The WriteLine output appears in the browser console.
+    // NOTE: WASM runs single-threaded, so the Threads list shows one managed thread -
+    //   use ConsoleApp1 for the threads and Parallel Stacks scenarios.
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        Console.WriteLine("Hello 1");
+        Console.WriteLine("Hello 2");
+        Console.WriteLine("Hello 3");
+        currentCount++;
+        Console.WriteLine("Hello 1");
+        Console.WriteLine("Hello 2");
+        Console.WriteLine("Hello 3");
+    }
+
+}

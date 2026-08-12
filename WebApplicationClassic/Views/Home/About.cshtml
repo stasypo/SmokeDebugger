@@ -1,0 +1,17 @@
+@*
+    SCENARIO "cshtml-code-block-breakpoint" (C# code blocks in CSHTML - language coverage)
+      README -> Basics -> Breakpoints 1.1 and README -> Basics -> Evaluation.
+    BREAKPOINT: on the 'ViewBag.Title = "About";' line inside the @{ } block below.
+    ACTION: open /Home/About in the browser.
+    EXPECTED: the debugger suspends inside this .cshtml file, ViewBag is inspectable in
+      Variables, and hovering over 'ViewBag' in the editor shows a value tooltip.
+    EVALUATE: 'ViewBag.Message' -> "Your application description page."
+      (set earlier by HomeController.About()).
+*@
+@{
+    ViewBag.Title = "About";
+}
+<h2>@ViewBag.Title.</h2>
+<h3>@ViewBag.Message</h3>
+
+<p>Use this area to provide additional information.</p>

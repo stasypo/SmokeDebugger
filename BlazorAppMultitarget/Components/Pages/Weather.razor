@@ -1,0 +1,84 @@
+﻿@page "/weather"
+@using JetBrains.Annotations
+@attribute [StreamRendering]
+
+<PageTitle>Weather</PageTitle>
+
+<h1>Weather</h1>
+
+<p>This component demonstrates showing data.</p>
+
+@if (forecasts == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Date</th>
+            <th aria-label="Temperature in Celsius">Temp. (C)</th>
+            <th aria-label="Temperature in Fahrenheit">Temp. (F)</th>
+            <th>Summary</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var forecast in forecasts)
+        {
+            <tr>
+                <td>@forecast.Date.ToShortDateString()</td>
+                <td>@forecast.TemperatureC</td>
+                <td>@forecast.TemperatureF</td>
+                <td>@forecast.Summary</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+
+@code {
+    // SCENARIO "razor-async-stepping" (streaming rendering)
+    //   README -> More -> Stepping, README -> More -> Tasks,
+    //   README -> More -> Evaluation 5 and 6.
+    // SETUP: run BlazorAppMultitarget under the debugger and open /weather.
+    // BREAKPOINT: on 'await Task.Delay(500);' below.
+    // STEP OVER across the await: stepping must stay in this .razor file and continue on
+    //   'var startDate = ...' - it must not descend into async state machine internals.
+    // WATCH: after the last statement, 'forecasts' holds exactly 5 items.
+    // ACTION: open the collection visualizer on 'forecasts' and the LINQ visualizer on
+    //   the Enumerable.Range(...).Select(...) expression.
+    // ACTION: with the session suspended here, open the Tasks window - the pending
+    //   rendering task of this component is listed.
+    private WeatherForecast[]? forecasts;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Simulate asynchronous loading to demonstrate streaming rendering
+        await Task.Delay(500);
+
+        var startDate = DateOnly.FromDateTime(DateTime.Now);
+        var summaries = new[] { "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching" };
+        forecasts = Enumerable.Range(1, 5).Select(index => new WeatherForecast
+        {
+            Date = startDate.AddDays(index)
+            , TemperatureC = Random.Shared.Next(-20, 55)
+            , Summary = summaries[Random.Shared.Next(summaries.Length)]
+        }).ToArray();
+    }
+
+    private class WeatherForecast
+    {
+        // [DebuggerGlobalWatch(Name = "Test Global Watch: Date")]
+        public DateOnly Date { get; set; }
+        // [DebuggerGlobalWatch(Name = "Test Global Watch: TemperatureC")]
+        public int TemperatureC { get; set; }
+        // [DebuggerGlobalWatch(Name = "Test Global Watch: Summary")]
+        public string? Summary { get; set; }
+        // [DebuggerGlobalWatch(Name = "Test Global Watch: TemperatureF")]
+        public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
+    }
+
+}

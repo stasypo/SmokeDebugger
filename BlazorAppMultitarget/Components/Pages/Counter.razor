@@ -1,0 +1,39 @@
+﻿@page "/counter"
+@rendermode InteractiveServer
+
+<PageTitle>Counter</PageTitle>
+
+<h1>Counter</h1>
+
+<p role="status">Current count: @currentCount</p>
+
+<button class="btn btn-primary" @onclick="IncrementCount">Click me</button>
+
+@code {
+    // SCENARIO "razor-code-block-breakpoint" (Blazor Server, interactive render mode)
+    //   README -> Basics -> Breakpoints 1.1, README -> Basics -> Stepping 1 and 3,
+    //   README -> Basics -> Threads & Variables 4.
+    // SETUP: run BlazorAppMultitarget under the debugger and open /counter in the browser.
+    // BREAKPOINT: on the first Console.WriteLine below, inside this Razor @code block.
+    // ACTION: click "Click me" in the browser.
+    // EXPECTED: the debugger suspends inside the .razor file (not in generated code) and
+    //   'currentCount' is visible in Variables.
+    // STEP OVER: the three identical lines before 'currentCount++' give a stable place to
+    //   verify that each step advances exactly one line.
+    // SET VALUE: set 'currentCount' to 41 while suspended, resume, and verify the page
+    //   renders "Current count: 42" - the running app used the new value.
+    // WATCH: add 'currentCount * 2' and verify it updates after 'currentCount++'.
+    private int currentCount = 0;
+
+    private void IncrementCount()
+    {
+        Console.WriteLine(currentCount);
+        Console.WriteLine(currentCount);
+        Console.WriteLine(currentCount);
+        currentCount++;
+        Console.WriteLine(currentCount);
+        Console.WriteLine(currentCount);
+        Console.WriteLine(currentCount);
+    }
+
+}
