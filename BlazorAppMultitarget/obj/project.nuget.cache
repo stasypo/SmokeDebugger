@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "0sv7S77BtDk=",
+  "success": true,
+  "projectFilePath": "C:\\Users\\Anastasiia.Posulikhi\\RiderProjects\\SmokeDebugger\\BlazorAppMultitarget\\BlazorAppMultitarget.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Anastasiia.Posulikhi\\.nuget\\packages\\jetbrains.annotations\\2026.2.0\\jetbrains.annotations.2026.2.0.nupkg.sha512",
+    "C:\\Users\\Anastasiia.Posulikhi\\.nuget\\packages\\microsoft.aspnetcore.app.internal.assets\\10.0.11\\microsoft.aspnetcore.app.internal.assets.10.0.11.nupkg.sha512"
+  ],
+  "logs": []
+}
