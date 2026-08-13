@@ -44,7 +44,7 @@ internal static class BreakpointScenarios
 	}
 
 	// SCENARIO "method-breakpoint" - README -> More -> Breakpoints 1.2.
-	// BREAKPOINT: ass a method breakpoint on MethodBreakpoint() method.
+	// BREAKPOINT: add a method breakpoint on MethodBreakpoint() method.
 	// EXPECTED: execution suspends on method entry.
 	private static void MethodBreakpoint()
 	{
