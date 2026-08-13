@@ -232,6 +232,12 @@ cover the Multitarget requirement.
 
    **Expected:** The breakpoint disappears from the editor and Breakpoints view and is no longer hit.
 
+5. Move the execution pointer from one code line to another one
+
+    *Where:* any breakpoint from item 1.
+
+    **Expected:** The execution pointer moves to the selected code line without executing the skipped statements, and debugging continues from the new position.
+
 ### Stepping
 
 *Where (1–9):* `ConsoleApp1/Scenarios/SteppingScenarios.cs`, run with
