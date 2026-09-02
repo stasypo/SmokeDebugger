@@ -5,7 +5,7 @@
 | Requirement type | Details |
 | --- | --- |
 | OS | Windows x64 – the whole checklist <br />macOS arm64 – basics only |
-| Technologies | ASP.NET Core – the whole checklist<br />Everything else – basics only<br />Blazor WASM, ASP.NET Classic, File-based app, ASP.NET Core and Angular, Desktop, Aspire, RemDev |
+| Technologies | ASP.NET Core (Blazor Server-Side) – the whole checklist<br />Everything else – basics only<br />Blazor WASM, ASP.NET Classic, File-based app, ASP.NET Core and Angular, Desktop, Aspire, RemDev |
 | Frameworks | .NET with the LTS/STS .NET SDK, .NET Framework 4.8, Mono, Multitarget |
 | Languages | C#, C# code blocks in CSHTML/Razor, F#, Razor, JS/TS |
 
@@ -13,7 +13,11 @@
 
 This repository (`SmokeDebugger.sln`) contains the projects referenced by every item below.
 
-Additional solutions: <https://github.com/stasypo/DebuggerRegressionTesting>
+Additional solutions:
+
+* <https://github.com/stasypo/DebuggerRegressionTesting>
+* <https://github.com/stasypo/TestNETMixedMode>
+* <https://github.com/stasypo/AsyncDebuggingPlayground>
 
 # Test projects
 
@@ -314,18 +318,6 @@ Evaluate a variable by hovering over the name of the variable in the editor wind
 
 **Expected:** A debugger tooltip appears and shows the current value of the variable and can be expanded to its members.
 
-**Mixed mode debug**
-
-Debug managed and native code in the same session
-
-*Where:* `ConsoleApp1/Scenarios/NativeInteropScenarios.cs` → `Run` – scenario `mixed-mode-debug`
-(Windows x64 only).
-*Setup:* enable native code debugging (mixed mode) in the `ConsoleApp1` run configuration; line
-breakpoint on `var ticks = GetTickCount64();`.
-*Action:* Step Into the `GetTickCount64` P/Invoke.
-
-**Expected:** The debugger can suspend, inspect stacks, and step through supported managed and native frames within the same debug session – `kernel32!GetTickCount64` appears in the Frames list next to the managed frames.
-
 ## More
 
 ### Threads & Variables
@@ -481,7 +473,7 @@ breakpoint on `var ticks = GetTickCount64();`.
 
        **Expected:** Execution suspends when the configured method is entered – three times, with `label` equal to `"call-1"`, `"call-2"` and `"call-3"`.
 
-    3. **\[Before release only\]** Data breakpoints
+    3. **\[Before release only, Windows only\]** Data breakpoints
 
        *Method:* `DataBreakpoint` / `Tick.Bump` – scenario `data-breakpoint`.
        *Setup:* stop on `var tick = new Tick();`, step over once, then right-click `tick.Value` in
@@ -515,7 +507,7 @@ breakpoint on `var ticks = GetTickCount64();`.
     1. .NET Line Breakpoints settings
     2. CLR Exception Breakpoints settings
 
-   **Expected:** The dialog opens and displays the configured breakpoints grouped by type.
+   **Expected:** The dialog opens and displays the configured breakpoints grouped by type, `Exception thrown in` and `Exception handler` settings are respected.
 
 6. Bookmarks tool window
 
@@ -558,28 +550,28 @@ Step through user async code
 
    **Expected:** The synthetic variable is created, displayed in the debugger, and contains the expected value (`8`).
 
-4. Use string visualizer (HTML, XML, JSON)
+4. Use string visualizer (HTML, XML, JSON) – refer to RIDER-A-2138 for more details
 
    *Where:* `ConsoleApp1/Scenarios/VisualizerScenarios.cs` → `StringVisualizers` – scenario
    `string-visualizer`; the locals `html`, `xml` and `json`.
 
    **Expected:** The full string value opens in the visualizer and is displayed correctly with the matching highlighting.
 
-5. Use collection visualizer
+5. Use collection visualizer – refer to RIDER-A-2138 for more details
 
    *Where:* `ConsoleApp1/Scenarios/VisualizerScenarios.cs` → `CollectionVisualizer` – scenario
    `collection-visualizer`; the local `people` holds 50 rows.
 
    **Expected:** Collection items are displayed correctly in a DataGrip-like table and can be inspected using the available visualizer controls.
 
-6. Use LINQ visualizer
+6. Use LINQ visualizer – refer to RIDER-A-2138 for more details
 
    *Where:* `ConsoleApp1/Scenarios/VisualizerScenarios.cs` → `LinqVisualizer` – scenario
    `linq-visualizer`; the local `query`.
 
    **Expected:** The LINQ expression is visualized and its result matches the evaluated expression – `["Ada", "Alan", "Grace", "Margaret"]`.
 
-7. Use predictive debugger with boolean operations
+7. Use predictive debugger with boolean operations – refer to RIDER-A-1963 for more details
 
    *Where:* `ConsoleApp1/Scenarios/EvaluationScenarios.cs` → `PredictiveBooleans` – scenario
    `predictive-boolean`. Desktop variant: `WpfApp1/MainWindow.xaml.cs` → `Divide_Click`.
@@ -587,7 +579,7 @@ Step through user async code
 
    **Expected:** The debugger correctly predicts the result of supported Boolean expressions and displays the predicted execution outcome, and the prediction updates when an operand is changed.
 
-8. Use predictive debugger with loops
+8. Use predictive debugger with loops – refer to RIDER-A-1963 for more details
 
    *Where:* `ConsoleApp1/Scenarios/EvaluationScenarios.cs` → `PredictiveLoop` – scenario
    `predictive-loop`.
@@ -602,6 +594,32 @@ Step through user async code
    *Action:* stop on the `Console.WriteLine` in `CrossThreadDependency` and expand `a.Name`.
 
    **Expected:** Because the getter calls `Debugger.NotifyOfCrossThreadDependency()`, the debugger does not evaluate the property silently – it offers an explicit "load value" action, and the value is produced only after it is confirmed.
+
+### [Windows only] Mixed mode debug
+
+Debug managed and native code in the same session (use ManagedToNative and NativeToManagedCallback
+projects for help)
+
+*Where:* the `ManagedToNative` and `NativeToManagedCallback` projects live in the `TestNETMixedMode` solution.
+**Expected:** The debugger can suspend, inspect stacks, and step through supported managed and native frames within the same debug session – `kernel32!GetTickCount64` appears in the Frames list next to the managed frames.
+
+### AI (MCP & Skills)
+
+1. Use `debugging-code` skill
+
+    1. From AIA plugin with any agent
+    2. From the terminal with any agent
+
+   **Expected:** the `debugging-code` skill is bundled and available in the Skills settings. It is
+   automatically detected by agents in the AI Assistant plugin. Agents launched from the terminal
+   can also detect it when the Rider MCP Server is enabled and the skill has been added to the agent.
+
+2. Use Rider Debugger MCP tools
+
+    1. From AIA plugin with any agent
+    2. From the terminal with any agent
+
+   **Expected:** MCP tools are detected and behave according to their description.
 
 ### Attach/Detach
 
@@ -761,7 +779,7 @@ several of the four tasks are in flight at once.
     * Tables view displays all tasks in table format
     * Graphs view shows only active tasks as a graph
 
-### [Before release only] JIT-debugger
+### [Before release only, Windows only] JIT-debugger
 
 *Where:* `ConsoleApp1/Scenarios/ExceptionScenarios.cs` → `JitDebugger` – scenario `jit-debugger`;
 `WpfApp1/MainWindow.xaml.cs` constructor – scenario `jit-debugger-wpf`;
