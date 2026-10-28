@@ -1,0 +1,97 @@
+@page "/multiplayer"
+@rendermode InteractiveServer
+@using BlazorAppMultitarget.Services
+@implements IDisposable
+@inject MultiplayerGame Game
+
+<PageTitle>Multiplayer</PageTitle>
+
+<h1>Multiplayer</h1>
+
+<p>Open this page in several browser tabs. Every tab joins the same game and sees the others' scores live.</p>
+
+@if (playerId is null)
+{
+    <div class="input-group mb-3" style="max-width: 24rem;">
+        <input class="form-control" placeholder="Your name" @bind="playerName" @bind:event="oninput" />
+        <button class="btn btn-primary" @onclick="Join" disabled="@string.IsNullOrWhiteSpace(playerName)">Join</button>
+    </div>
+}
+else
+{
+    <p>
+        <button class="btn btn-primary" @onclick="Score">+1 point</button>
+        <button class="btn btn-secondary" @onclick="Game.Reset">Reset scores</button>
+        <button class="btn btn-outline-danger" @onclick="Leave">Leave</button>
+    </p>
+}
+
+<table class="table">
+    <thead>
+    <tr>
+        <th>Player</th>
+        <th>Score</th>
+    </tr>
+    </thead>
+    <tbody>
+    @foreach (var player in Game.Players)
+    {
+        <tr class="@(player.Id == playerId ? "table-primary" : null)">
+            <td>@player.Name</td>
+            <td>@player.Score</td>
+        </tr>
+    }
+    </tbody>
+</table>
+
+@code {
+    // SCENARIO "multiplayer-cross-circuit" (Blazor Server, shared singleton state)
+    //   README -> Basics -> Threads & Variables.
+    // SETUP: run BlazorAppMultitarget under the debugger and open /multiplayer in two
+    //   browser tabs; join with a different name in each.
+    // BREAKPOINT: on the 'InvokeAsync(StateHasChanged)' line in OnGameStateChanged below.
+    // ACTION: click "+1 point" in the first tab.
+    // EXPECTED: the breakpoint is hit once per open tab. For the OTHER tab the call stack
+    //   starts in the first tab's Score click - the event crosses circuits - and
+    //   'playerName' in Variables shows the other tab's name.
+    // THREADS: while suspended, both circuits' work is visible in the Threads view;
+    //   resuming updates the scoreboard in every tab.
+    private string playerName = "";
+    private Guid? playerId;
+
+    protected override void OnInitialized()
+    {
+        Game.StateChanged += OnGameStateChanged;
+    }
+
+    private void Join()
+    {
+        playerId = Game.Join(playerName.Trim());
+    }
+
+    private void Score()
+    {
+        if (playerId is { } id)
+            Game.Score(id);
+    }
+
+    private void Leave()
+    {
+        if (playerId is { } id)
+            Game.Leave(id);
+        playerId = null;
+    }
+
+    private void OnGameStateChanged()
+    {
+        _ = InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        Game.StateChanged -= OnGameStateChanged;
+        if (playerId is { } id)
+            Game.Leave(id);
+    }
+
+}

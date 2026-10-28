@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using BlazorAppMultitarget.Components;
+using BlazorAppMultitarget.Services;
 using JetBrains.Annotations;
 
 // =============================================================================
@@ -22,6 +23,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
 	.AddInteractiveServerComponents();
+
+// Shared across all circuits so every browser tab plays the same /multiplayer game.
+builder.Services.AddSingleton<MultiplayerGame>();
 
 // SCENARIO "startup-console-output" - README -> More -> Console 1 and 3.
 // ACTION: verify the numbers 0..4 appear once each, in order, in the debug console.
